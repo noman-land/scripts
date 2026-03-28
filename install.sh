@@ -22,6 +22,23 @@ tilde_path() {
     fi
 }
 
+# Check if a utility is already installed
+is_installed() {
+    local util_name="$1"
+    local executable_path="$2"
+    local dest="$INSTALL_DIR/$util_name"
+
+    if [[ -L "$dest" ]]; then
+        # It's a symlink, check if it points to the correct executable
+        local target
+        target="$(readlink "$dest")"
+        if [[ "$target" == "$executable_path" ]]; then
+            return 0  # True, is installed correctly
+        fi
+    fi
+    return 1  # False, not installed or incorrectly installed
+}
+
 # Print a nice header
 print_header() {
     echo ""
@@ -43,7 +60,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 UTILITIES=()
 for dir in "$SCRIPT_DIR"/*/; do
     [[ -d "$dir" ]] || continue
-    # Get utility name from directory name (strip trailing slash)
+    # Remove trailing slash from directory path
+    dir="${dir%/}"
+    # Get utility name from directory name
     util_name="$(basename "$dir")"
     # Skip hidden directories
     [[ "$util_name" == .* ]] && continue
@@ -73,19 +92,27 @@ fi
 
 print_header
 print_section "Found Utilities"
+
+# Show utilities with their installation status
 for i in "${!UTILITIES[@]}"; do
     util="${UTILITIES[$i]%%:*}"
-    printf "  %2d) %-20s\n" $((i+1)) "$util"
+    executable="${UTILITIES[$i]#*:}"
+    if is_installed "$util" "$executable"; then
+        status="[\033[1;32mINSTALLED\033[0m]"
+    else
+        status="[\033[1;37mNOT INSTALLED\033[0m]"
+    fi
+    printf "  %2d) %-20s %b\n" $((i+1)) "$util" "$status"
 done
 echo ""
 
 # Prompt for selection
 print_section "Selection"
-echo "Enter the numbers of the utilities you wish to install, separated by spaces."
+echo "Enter the numbers of the utilities you wish to toggle (install if not installed, uninstall if installed)."
 echo "Examples:"
-echo "  '1 3'   : install the 1st and 3rd utilities"
+echo "  '1 3'   : toggle the 1st and 3rd utilities"
 echo "  'all'   : install all utilities"
-echo "  'none'  : install nothing (exit)"
+echo "  <enter> : exit without making changes"
 echo ""
 read -rp "Your choice: " choice
 
@@ -93,13 +120,10 @@ read -rp "Your choice: " choice
 case "$choice" in
     [Aa][Ll][Ll])
         SELECTED=("${UTILITIES[@]}")
-        ;;
-    [Nn][Oo][Nn][Ee])
-        info "No utilities selected. Exiting."
-        exit 0
+        ACTION="install"
         ;;
     "")   # Handle empty input (just pressing enter)
-        info "No utilities selected. Exiting."
+        info "No changes made. Exiting."
         exit 0
         ;;
     *)
@@ -117,13 +141,22 @@ case "$choice" in
             error "No valid utilities selected. Exiting."
             exit 1
         fi
+        ACTION="toggle"
         ;;
 esac
 
 print_section "Selected Utilities"
 for entry in "${SELECTED[@]}"; do
     util="${entry%%:*}"
-    printf "  %-20s\n" "$util"
+    executable="${entry#*:}"
+    if is_installed "$util" "$executable"; then
+        status="[\033[1;32mINSTALLED\033[0m]"
+        action_text="will be uninstalled"
+    else
+        status="[\033[1;37mNOT INSTALLED\033[0m]"
+        action_text="will be installed"
+    fi
+    printf "  %-20s %b (%s)\n" "$util" "$status" "$action_text"
 done
 echo ""
 
@@ -141,28 +174,57 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
     info "For the current session you can run: export PATH=\"$INSTALL_DIR:\$PATH\""
 fi
 
-# Install selected utilities
-print_section "Installation"
+# Process selected utilities based on action
+print_section "Processing"
 for entry in "${SELECTED[@]}"; do
     util_name="${entry%%:*}"
     executable_path="${entry#*:}"
     link_name="$util_name"
     dest="$INSTALL_DIR/$link_name"
-    if [[ -e "$dest" || -L "$dest" ]]; then
-        # Ask before overwriting
-        read -rp "A file or link named '$link_name' already exists in '$(tilde_path "$INSTALL_DIR")'. Overwrite? [y/N] " answer
-        if [[ ! "$answer" =~ ^[Yy]$ ]]; then
-            warn "Skipping $util_name."
-            continue
+
+    # Determine if we should install or uninstall
+    should_install=false
+    if [[ "$ACTION" == "install" ]]; then
+        should_install=true
+    elif [[ "$ACTION" == "toggle" ]]; then
+        if ! is_installed "$util_name" "$executable_path"; then
+            should_install=true
         fi
-        rm -f "$dest"
     fi
-    ln -s "$executable_path" "$dest"
-    success "Created symlink: $link_name -> $executable_path"
+
+    if [[ "$should_install" == true ]]; then
+        # Install the utility (create symlink)
+        if [[ -e "$dest" || -L "$dest" ]]; then
+            # Ask before overwriting
+            read -rp "A file or link named '$link_name' already exists in '$(tilde_path "$INSTALL_DIR")'. Overwrite? [y/N] " answer
+            if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+                warn "Skipping $util_name."
+                continue
+            fi
+            rm -f "$dest"
+        fi
+        ln -s "$executable_path" "$dest"
+        success "Installed: $link_name -> $executable_path"
+    elif [[ "$ACTION" == "toggle" ]]; then
+        # Uninstall the utility (remove symlink)
+        if is_installed "$util_name" "$executable_path"; then
+            if [[ -L "$dest" && "$(readlink "$dest")" == "$executable_path" ]]; then
+                # Only remove if it's our symlink pointing to the correct target
+                rm -f "$dest"
+                success "Uninstalled: $link_name"
+            else
+                warn "Skipping $util_name: not a valid installation or points to wrong target"
+            fi
+        fi
+    fi
 done
 
 print_section "Completion"
-success "Installation complete."
+if [[ "$ACTION" == "install" ]]; then
+    success "Installation complete."
+elif [[ "$ACTION" == "toggle" ]]; then
+    success "Toggle operation complete."
+fi
 info "You can now run the installed utilities from your shell (if $(tilde_path "$INSTALL_DIR") is in your PATH)."
 if [ ${#SELECTED[@]} -gt 0 ]; then
     first_util="${SELECTED[0]%%:*}"
