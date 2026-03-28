@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# yt-sync – download video+subtitles+comments (with archive) and sync to a given rclone remote
+
+set -euo pipefail
+
+# ---- Input validation ----
+if [[ $# -lt 2 ]]; then
+  echo "Usage: $0 <YouTube URL> <rclone remote:path>"
+  echo "Example: $0 \"https://www.youtube.com/@the-channel\" cf:my-bucket/files"
+  exit 1
+fi
+YT_URL="$1"
+R2_TARGET="$2"  # e.g., cf:my-bucket/files
+
+# Download archive file to avoid re-downloading already processed videos
+ARCHIVE_FILE="yt-dlp-archive.txt"
+
+# ---- 1. Download video + subtitles + comments (using archive) ----
+yt-dlp "$YT_URL" \
+  -f "bestvideo+bestaudio" \
+  --merge-output-format mp4 \
+  --write-sub \
+  --write-auto-sub \
+  --all-subs \
+  --sub-format srt \
+  --write-comments \
+  --download-archive "$ARCHIVE_FILE" \
+  -o "%(title)s.%(ext)s"
+
+# ---- 2. Sync downloaded files to the given rclone target ----
+rclone sync -P . "$R2_TARGET"
