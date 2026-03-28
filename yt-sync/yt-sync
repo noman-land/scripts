@@ -21,10 +21,22 @@ yt-dlp "$YT_URL" \
   --merge-output-format mp4 \
   --write-sub \
   --write-auto-sub \
-  --all-subs \
+  --sub-langs "en.*" \
   --sub-format srt \
   --write-comments \
   --download-archive "$ARCHIVE_FILE" \
+  --impersonate Chrome-133 \
+  --user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" \
+  --remote-components ejs:github \
+  --no-check-certificate \
+  --sleep-interval 58 \
+  --max-sleep-interval 118 \
+  --sleep-subtitles 32 \
+  --sleep-requests 9 \
+  --retries 3 \
+  --fragment-retries 3 \
+  --skip-unavailable-fragments \
+  --limit-rate 200K \
   -o "%(title)s.%(ext)s"
 
 # ---- 2. Sync downloaded files to the given rclone target ----
