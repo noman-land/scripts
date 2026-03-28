@@ -98,6 +98,10 @@ case "$choice" in
         info "No utilities selected. Exiting."
         exit 0
         ;;
+    "")   # Handle empty input (just pressing enter)
+        info "No utilities selected. Exiting."
+        exit 0
+        ;;
     *)
         # Split the choice by spaces and validate
         SELECTED=()
