@@ -26,10 +26,10 @@ yt-dlp "$YT_URL" \
   --impersonate Chrome-133 \
   --user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" \
   --remote-components ejs:github \
-  --sleep-interval 3.99653 \
-  --max-sleep-interval 9.3281 \
-  --sleep-subtitles 3.3865 \
-  --sleep-requests 3.47996 \
+  --sleep-interval 2.99653 \
+  --max-sleep-interval 7.3281 \
+  --sleep-subtitles 2.3865 \
+  --sleep-requests 2.47996 \
   --retries 3 \
   --fragment-retries 3 \
   --skip-unavailable-fragments \
