@@ -17,7 +17,6 @@ ARCHIVE_FILE="yt-dlp-archive.txt"
 
 # ---- 1. Download video + subtitles + comments (using archive) ----
 yt-dlp "$YT_URL" \
-  -f "best" \
   --write-sub \
   --write-auto-sub \
   --sub-langs "en.*" \
