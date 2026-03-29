@@ -10,6 +10,28 @@ A collection of utility scripts and commands for various tasks.
 
 Each utility may have its own instructions. Refer to the README in the respective utility's directory.
 
+## Installation
+
+You can install the utilities using the provided `install.sh` script:
+
+```bash
+./install.sh
+```
+
+This will launch a text-based user interface (TUI) that allows you to:
+- See which utilities are available
+- Toggle installation/uninstallation of utilities
+- Select multiple utilities at once
+- Install all utilities with the "all" option
+
+By default, utilities are installed to `$HOME/.local/bin`. To install to a different location, provide the directory as an argument:
+
+```bash
+./install.sh /usr/local/bin  # Requires sudo for system-wide installation
+```
+
+After installation, make sure the installation directory is in your `PATH`. The script will remind you if it's not already included.
+
 ## Contributing
 
 To add a new utility/command:
