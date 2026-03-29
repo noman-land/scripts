@@ -17,8 +17,7 @@ ARCHIVE_FILE="yt-dlp-archive.txt"
 
 # ---- 1. Download video + subtitles + comments (using archive) ----
 yt-dlp "$YT_URL" \
-  -f "bestvideo+bestaudio" \
-  --merge-output-format mp4 \
+  -f "best" \
   --write-sub \
   --write-auto-sub \
   --sub-langs "en.*" \
@@ -28,15 +27,13 @@ yt-dlp "$YT_URL" \
   --impersonate Chrome-133 \
   --user-agent "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" \
   --remote-components ejs:github \
-  --no-check-certificate \
-  --sleep-interval 58 \
-  --max-sleep-interval 118 \
-  --sleep-subtitles 32 \
+  --sleep-interval 47 \
+  --max-sleep-interval 98 \
+  --sleep-subtitles 17 \
   --sleep-requests 9 \
   --retries 3 \
   --fragment-retries 3 \
   --skip-unavailable-fragments \
-  --limit-rate 200K \
   -o "%(title)s.%(ext)s"
 
 # ---- 2. Sync downloaded files to the given rclone target ----
