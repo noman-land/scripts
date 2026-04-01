@@ -30,15 +30,10 @@ You can install yt-sync (and any other utilities in this repository), use the ro
 
 ```bash
 cd /path/to/scripts
-./install.sh
+./install
 ```
 
-The install script will list available utilities and allow you to select which ones to install (or choose all). It creates symbolic links in the specified directory (default: ~/.local/bin). Make sure that directory is in your $PATH.
-
-Alternatively, you can run the install script with a custom directory as the first argument:
-```bash
-./install.sh /usr/local/bin
-```
+The install script will present an interactive TUI where you can navigate with arrow keys and select utilities with space bar. It creates symbolic links in your PATH (default: ~/.local/bin).
 
 After installation, you can run the utility directly from your terminal.
 

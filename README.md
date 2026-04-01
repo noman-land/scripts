@@ -12,25 +12,25 @@ Each utility may have its own instructions. Refer to the README in the respectiv
 
 ## Installation
 
-You can install the utilities using the provided `install.sh` script:
+You can install the utilities using the provided `install` script:
 
 ```bash
-./install.sh
+./install
 ```
 
-This will launch a text-based user interface (TUI) that allows you to:
-- See which utilities are available
-- Toggle installation/uninstallation of utilities
-- Select multiple utilities at once
-- Install all utilities with the "all" option
+This will launch an interactive TUI that allows you to:
+- Navigate with ↑/↓ arrow keys
+- Select/deselect utilities with space bar
+- Apply changes with Enter
+- Quit with Escape or q
 
-By default, utilities are installed to `$HOME/.local/bin`. To install to a different location, provide the directory as an argument:
+Utilities are installed as symlinks to `$HOME/.local/bin`. Make sure that directory is in your `PATH`.
 
-```bash
-./install.sh /usr/local/bin  # Requires sudo for system-wide installation
-```
+## Requirements
 
-After installation, make sure the installation directory is in your `PATH`. The script will remind you if it's not already included.
+- Rust toolchain (to build the installer from source)
+
+The installer is written in Rust and will be built automatically on first run if `cargo` is available. Install Rust from https://rustup.rs
 
 ## Contributing
 
@@ -43,7 +43,7 @@ To add a new utility/command:
 5. Update this root README.md to list the new utility under "## Contents" with a link to its README.
 6. Commit your changes.
 
-The root install script (`install.sh`) will automatically detect the new utility and allow users to install it via a TUI.
+The installer will automatically detect the new utility.
 
 ## License
 

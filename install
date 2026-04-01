@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="$SCRIPT_DIR/install-rs"
+BINARY="$INSTALL_DIR/target/release/install-rs"
+
+if [[ ! -f "$BINARY" ]]; then
+    if command -v cargo &>/dev/null; then
+        echo "Building installer..."
+        cargo build --release --manifest-path "$INSTALL_DIR/Cargo.toml" </dev/null
+    else
+        echo "Error: Rust toolchain not found."
+        echo ""
+        echo "The installer is written in Rust and requires cargo to build."
+        echo "Install Rust: https://rustup.rs"
+        echo ""
+        echo "Or build manually:"
+        echo "  cd install-rs && cargo build --release"
+        exit 1
+    fi
+fi
+
+exec "$BINARY" "$SCRIPT_DIR"
