@@ -21,10 +21,10 @@ cargo run --release -- /path/to/scripts
 
 | Key | Action |
 |---|---|
-| ↑/↓ | Navigate utilities |
-| Space | Toggle selection |
-| Enter | Apply changes and quit |
-| Esc / q | Quit without changes |
+| `↑`/`↓` | Navigate utilities |
+| `Space` | Toggle selection |
+| `Enter` | Apply changes and quit |
+| `Esc` / `q` | Quit without changes |
 
 ## How it works
 

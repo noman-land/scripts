@@ -1,6 +1,6 @@
 # yt-sync
 
-A utility to download YouTube videos with all available subtitles and comments and sync them to a given rclone remote (e.g., Cloudflare R2) using rclone.
+A utility to download YouTube videos with all available subtitles and comments and sync them to a given `rclone` remote (e.g., Cloudflare R2) using `rclone`.
 
 ## Usage
 
@@ -16,7 +16,7 @@ yt-sync "https://www.youtube.com/@the-channel" cf:my-bucket/files
 ## How it works
 
 1. **Download**: Uses `yt-dlp` to download the best quality video and audio, merges them into an MP4 file, writes all available subtitles (including auto-generated) as `.srt` files, and writes comments as a `.comments.json` file. The `--download-archive` option is used to keep track of already downloaded videos, so only new videos are downloaded on subsequent runs.
-2. **Sync**: Uses `rclone sync` to upload all downloaded files (video, subtitles, comments) to the given rclone remote:path, making the remote a mirror of the local directory.
+2. **Sync**: Uses `rclone sync` to upload all downloaded files (video, subtitles, comments) to the given `rclone remote:path`, making the remote a mirror of the local directory.
 
 ## Requirements
 
@@ -26,7 +26,7 @@ yt-sync "https://www.youtube.com/@the-channel" cf:my-bucket/files
 
 ## Installation
 
-You can install yt-sync (and any other utilities in this repository), use the root install script:
+You can install `yt-sync` (and any other utilities in this repository), use the root install script:
 
 ```bash
 cd /path/to/scripts
