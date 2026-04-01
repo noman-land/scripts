@@ -33,11 +33,11 @@ cd /path/to/scripts
 ./install
 ```
 
-The install script will present an interactive TUI where you can navigate with arrow keys and select utilities with space bar. It creates symbolic links in your PATH (default: ~/.local/bin).
+The install script will present an interactive TUI where you can navigate with arrow keys and select utilities with space bar. It creates symbolic links in your PATH (default: `~/.local/bin`).
 
 After installation, you can run the utility directly from your terminal.
 
-Prerequisites: yt-dlp and rclone must be installed and configured.
+Prerequisites: `yt-dlp` and `rclone` must be installed and configured.
 
 ## Notes
 

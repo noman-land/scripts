@@ -40,7 +40,7 @@ To add a new utility/command:
 2. Place the executable script inside that folder (e.g., `mytool/mytool`).
 3. Add a README.md inside the folder describing usage, requirements, installation notes, etc.
 4. Ensure the script is executable (`chmod +x mytool/mytool`).
-5. Update this root README.md to list the new utility under "## Contents" with a link to its README.
+5. Update this root `README.md` to list the new utility under "## Contents" with a link to its README.
 6. Commit your changes.
 
 The installer will automatically detect the new utility.
